@@ -1,6 +1,7 @@
 import csv
-
+from datetime import datetime
 from django.core.management.base import BaseCommand
+from django.utils.text import slugify
 from phones.models import Phone
 
 
@@ -13,5 +14,13 @@ class Command(BaseCommand):
             phones = list(csv.DictReader(file, delimiter=';'))
 
         for phone in phones:
-            # TODO: Добавьте сохранение модели
-            pass
+            phone = Phone(
+                id=int(line[0]),
+                name=line[1],
+                image=line[2],
+                price=float(line[3]),
+                release_date=datetime.strptime(line[4], '%Y-%m-%d').date(),
+                lte_exists=line[5],
+                slug=slugify(line[1]),
+            )
+            phone.save()
